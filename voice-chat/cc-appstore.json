@@ -1,0 +1,152 @@
+{
+  "schemaVersion": 1,
+  "id": "voice-chat",
+  "name": "Phone",
+  "icon": "icon.png",
+  "iconBackground": "#275F87",
+  "interface": {
+    "title": "Phone",
+    "platformShell": true,
+    "status": "Voice chat is off.",
+    "layout": {
+      "maxWidth": 154,
+      "contentTop": 52,
+      "rowHeight": 27
+    },
+    "state": {
+      "voiceEnabled": "false",
+      "soundFeedback": "false",
+      "pushToTalk": "false",
+      "voiceVolume": "100"
+    },
+    "components": [
+      {
+        "view": "main",
+        "type": "toggle",
+        "behavior": "program",
+        "style": "apple",
+        "onValue": "true",
+        "trackWidth": 24,
+        "trackHeight": 14,
+        "animationMs": 180,
+        "showStateLabel": false,
+        "id": "voiceEnabled",
+        "label": "Voice chat",
+        "radialLabel": "Voice",
+        "radial": true,
+        "handheld": true,
+        "action": "voice",
+        "row": 0,
+        "height": 24,
+        "tooltip": "Stream microphone audio through the noisy pocket computer. Right-click to pin or unpin this toggle.",
+        "options": [
+          { "value": "false", "label": "Off" },
+          { "value": "true", "label": "On" }
+        ]
+      },
+      {
+        "view": "main",
+        "type": "toggle",
+        "behavior": "state",
+        "style": "apple",
+        "onValue": "true",
+        "trackWidth": 24,
+        "trackHeight": 14,
+        "animationMs": 180,
+        "showStateLabel": false,
+        "id": "soundFeedback",
+        "label": "Sound feedback",
+        "radialLabel": "Feedback",
+        "radial": true,
+        "action": "feedback",
+        "row": 1,
+        "height": 24,
+        "tooltip": "Hear your outgoing stream from the noisy pocket computer's real CC speaker. Other players are unaffected.",
+        "options": [
+          { "value": "false", "label": "Off" },
+          { "value": "true", "label": "On" }
+        ]
+      },
+      {
+        "view": "main",
+        "type": "toggle",
+        "behavior": "state",
+        "style": "apple",
+        "onValue": "true",
+        "trackWidth": 24,
+        "trackHeight": 14,
+        "animationMs": 180,
+        "showStateLabel": false,
+        "id": "pushToTalk",
+        "label": "Push to talk",
+        "radialLabel": "Push to talk",
+        "radial": true,
+        "holdKey": "pushToTalk",
+        "action": "pushToTalk",
+        "row": 2,
+        "height": 24,
+        "tooltip": "Only transmit while the registered Push to Talk key is held. Change it in Minecraft Controls; right-click to pin.",
+        "options": [
+          { "value": "false", "label": "Off" },
+          { "value": "true", "label": "On" }
+        ]
+      },
+      {
+        "view": "main",
+        "type": "slider",
+        "id": "voiceVolume",
+        "binding": "voiceVolume",
+        "label": "Volume",
+        "row": 3,
+        "height": 24,
+        "trackWidth": 62,
+        "handleSize": 13,
+        "radialActions": ["volumeDown", "volumeUp"],
+        "tooltip": "Microphone gain. Middle-click to pin Volume Down and Volume Up to the radial menu.",
+        "options": [
+          { "value": "50", "label": "50%" },
+          { "value": "60", "label": "60%" },
+          { "value": "70", "label": "70%" },
+          { "value": "80", "label": "80%" },
+          { "value": "90", "label": "90%" },
+          { "value": "100", "label": "100%" },
+          { "value": "110", "label": "110%" },
+          { "value": "120", "label": "120%" },
+          { "value": "130", "label": "130%" },
+          { "value": "140", "label": "140%" },
+          { "value": "150", "label": "150%" },
+          { "value": "160", "label": "160%" },
+          { "value": "170", "label": "170%" },
+          { "value": "180", "label": "180%" },
+          { "value": "190", "label": "190%" },
+          { "value": "200", "label": "200%" }
+        ]
+      },
+      {
+        "view": "quick",
+        "type": "button",
+        "id": "volumeDown",
+        "label": "Volume down",
+        "radialLabel": "Volume down",
+        "radial": false,
+        "action": "volumeDown"
+      },
+      {
+        "view": "quick",
+        "type": "button",
+        "id": "volumeUp",
+        "label": "Volume up",
+        "radialLabel": "Volume up",
+        "radial": false,
+        "action": "volumeUp"
+      }
+    ],
+    "actions": {
+      "voice": { "handler": "voice.background_toggle" },
+      "feedback": { "handler": "voice.feedback_toggle" },
+      "pushToTalk": { "handler": "voice.push_to_talk_toggle" },
+      "volumeDown": { "handler": "voice.volume_down" },
+      "volumeUp": { "handler": "voice.volume_up" }
+    }
+  }
+}

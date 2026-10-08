@@ -1,0 +1,7 @@
+/.craftos-data/
+/.craftos-jit-data/
+/tools/
+/reference/
+/.idea/
+/.vscode/
+*.log

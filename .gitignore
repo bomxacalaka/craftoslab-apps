@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.pyc
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Logs
+*.log
+
+# CraftOS local data (safety net; per-app ignores already cover most)
+.data/
+.craftos-data/
+.craftos-jit-data/

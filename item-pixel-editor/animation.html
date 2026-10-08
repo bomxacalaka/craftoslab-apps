@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#171819">
+  <title>Blocksmith — Animated Minecraft Sprite Editor</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="animated-editor">
+  <header class="topbar">
+    <a class="brand" href="index.html" aria-label="Blocksmith home">
+      <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+      <span><strong>BLOCKSMITH</strong><small>ANIMATION WORKBENCH</small></span>
+    </a>
+    <div class="file-name" title="Automatically saved in this browser"><span class="status-dot"></span><span id="documentName">animated_item.png</span><small>AUTOSAVED</small></div>
+    <div class="top-actions">
+      <button class="button button-muted new-button" id="newButton" type="button">New</button>
+      <button class="button button-muted" id="importButton" type="button">Import sheet</button>
+      <button class="button button-muted meta-button" id="metaButton" type="button">Export .mcmeta</button>
+      <div class="export-group sheet-export-group">
+        <label for="exportFormat">Export format</label>
+        <select id="exportFormat" aria-label="Export format"><option value="png">PNG</option><option value="webp">WEBP</option></select>
+        <button class="button button-muted" id="sheetButton" type="button">Sheet ↓</button>
+      </div>
+      <button class="button button-primary" id="exportButton" type="button">Export pack ZIP <span aria-hidden="true">↓</span></button>
+    </div>
+  </header>
+
+  <nav class="editor-tabs" aria-label="Editor type">
+    <a href="index.html"><span class="tab-dot"></span>Static item</a>
+    <a class="active" href="animation.html"><span class="tab-play">▶</span>Animated sprite</a>
+  </nav>
+
+  <main class="workspace">
+    <aside class="panel tools-panel" aria-label="Drawing tools">
+      <div class="panel-heading"><span>TOOLS</span><small>SHORTCUT</small></div>
+      <div class="tool-list" role="toolbar" aria-label="Pixel tools">
+        <button class="tool active" data-tool="pencil" title="Pencil (B)"><span class="tool-icon pencil-icon"></span><span>Pencil</span><kbd>B</kbd></button>
+        <button class="tool" data-tool="variable" title="Variable pencil (V)"><span class="tool-icon variable-icon">✦</span><span>Variable pencil</span><kbd>V</kbd></button>
+        <button class="tool" data-tool="eraser" title="Eraser (E)"><span class="tool-icon eraser-icon"></span><span>Eraser</span><kbd>E</kbd></button>
+        <button class="tool" data-tool="picker" title="Pick colour (I)"><span class="tool-icon picker-icon"></span><span>Pick colour</span><kbd>I</kbd></button>
+      </div>
+      <div class="control-section">
+        <div class="control-label"><label for="sizeRange">PENCIL SIZE</label><output id="sizeOutput">1 px</output></div>
+        <input id="sizeRange" type="range" min="1" max="4" value="1">
+        <div class="range-ticks"><span>1</span><span>2</span><span>3</span><span>4</span></div>
+      </div>
+      <div class="control-section variation-control" id="variationControl">
+        <div class="control-label"><label for="variationRange">COLOUR STRENGTH VARIATION</label><output id="variationOutput">24%</output></div>
+        <input id="variationRange" type="range" min="0" max="100" value="24">
+        <div class="variation-scale"><span>STEADY</span><span>STRONG</span></div>
+        <p>Randomly lightens or darkens each pixel while preserving its colour.</p>
+      </div>
+      <div class="cc-preset-card">
+        <small>CC:TWEAKED 1.120.0</small>
+        <strong>Pocket computer blink</strong>
+        <p>Loads the real two-frame sprite and preview layers.</p>
+        <button id="ccPresetButton" type="button">Load supplied preset</button>
+      </div>
+    </aside>
+
+    <section class="canvas-area animation-canvas-area" id="dropZone">
+      <div class="canvas-toolbar">
+        <div class="history-actions">
+          <button class="icon-button" id="undoButton" type="button" title="Undo (Ctrl+Z)" disabled>↶</button>
+          <button class="icon-button" id="redoButton" type="button" title="Redo (Ctrl+Shift+Z)" disabled>↷</button>
+          <span class="divider"></span>
+          <label class="grid-toggle"><input id="gridToggle" type="checkbox" checked><span></span> Pixel grid</label>
+        </div>
+        <div class="zoom-control">
+          <button class="zoom-button" id="zoomOut" type="button" aria-label="Zoom out">−</button>
+          <output id="zoomOutput">2400%</output>
+          <button class="zoom-button" id="zoomIn" type="button" aria-label="Zoom in">+</button>
+        </div>
+      </div>
+      <div class="canvas-stage">
+        <div class="canvas-wrap" id="canvasWrap">
+          <canvas id="editorCanvas" width="16" height="16" aria-label="Editable animation frame"></canvas>
+          <canvas id="gridCanvas" width="16" height="16" aria-hidden="true"></canvas>
+        </div>
+        <div class="drop-message"><strong>Drop a vertical sprite sheet</strong><span>PNG or WebP · square frames stacked top to bottom</span></div>
+      </div>
+      <section class="timeline" aria-label="Animation timeline">
+        <div class="layer-editor-bar">
+          <span>EDIT LAYER</span>
+          <button class="active" data-layer="animation" type="button"><i></i>Animated screen frames</button>
+          <button data-layer="body" type="button"><i></i>Advanced body <small>yellow casing</small></button>
+          <button data-layer="light" type="button"><i></i>Light overlay</button>
+          <button class="export-layer-button" id="exportLayerButton" type="button" hidden>Export body PNG</button>
+        </div>
+        <div class="timeline-top">
+          <div class="playback-controls">
+            <button class="play-button" id="playButton" type="button" title="Play or pause">❚❚</button>
+            <label for="frametimeInput">FRAME TIME</label>
+            <input id="frametimeInput" type="number" min="1" max="200" value="8">
+            <span>ticks</span><output id="secondsOutput">0.40 s</output>
+          </div>
+          <div class="frame-actions">
+            <button id="addFrameButton" type="button">＋ Blank</button>
+            <button id="duplicateFrameButton" type="button">⧉ Duplicate</button>
+            <button id="deleteFrameButton" type="button">Delete</button>
+          </div>
+        </div>
+        <div class="frame-strip" id="frameStrip"></div>
+      </section>
+      <footer class="canvas-footer">
+        <span id="dimensions">16 × 16 px · 2 frames</span>
+        <span class="footer-tip"><i></i> Minecraft vertical animation sheet</span>
+      </footer>
+    </section>
+
+    <aside class="panel colour-panel" aria-label="Colour and preview controls">
+      <div class="panel-heading"><span>COLOUR PALETTE</span></div>
+      <div class="current-colour">
+        <button id="colourPreview" type="button" aria-label="Open colour picker"></button>
+        <div><small>CURRENT COLOUR</small><strong id="hexValue">#EEE846</strong></div>
+        <input id="colourInput" type="color" value="#eee846" aria-label="Choose colour">
+      </div>
+      <div class="swatches" id="swatches" aria-label="Colour swatches"></div>
+      <button class="add-swatch" id="addSwatch" type="button"><span>＋</span> Add current colour</button>
+      <div class="recent-section">
+        <div class="subheading"><span>FROM THIS FRAME</span><button id="refreshPalette" type="button" title="Refresh colours">↻</button></div>
+        <div class="item-swatches" id="itemSwatches"></div>
+      </div>
+      <div class="inventory-preview-section">
+        <div class="subheading"><span>ANIMATED PREVIEW</span><small>20 TPS</small></div>
+        <div class="inventory-preview-row">
+          <div class="inventory-slot" aria-label="Animated Minecraft inventory preview"><canvas id="inventoryPreview" width="18" height="18"></canvas></div>
+          <div class="preview-caption"><strong>True GUI ratio</strong><span>18 × 18 slot · 16 × 16 item</span></div>
+        </div>
+        <label class="layer-toggle"><input id="ccLayersToggle" type="checkbox"><span></span><b>Composite editable CC layers</b></label>
+      </div>
+      <div class="help-card">
+        <span class="help-icon">?</span>
+        <div><strong>Minecraft-ready export</strong><p><b>Export pack ZIP</b> bundles every edited layer, model, metadata file, and pack manifest.</p></div>
+      </div>
+    </aside>
+  </main>
+  <input id="fileInput" type="file" accept="image/png,image/webp,.png,.webp" hidden>
+  <script src="animation.js"></script>
+</body>
+</html>

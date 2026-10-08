@@ -1,0 +1,18 @@
+{
+  "id": "draw-ocr",
+  "name": "OCR",
+  "icon": "icon.png",
+  "iconBackground": "#9A6B24",
+  "entry": "ocr.lua",
+  "arguments": [
+    "--letters-model", "model/letters.bin",
+    "--digits-model", "model/digits.bin",
+    "--llama-program", "llama/llama2.lua",
+    "--llama-model", "llama/models/stories260K.bin",
+    "--llama-tokenizer", "llama/models/tok512.bin",
+    "--llama-steps", "160",
+    "--llama-temperature", "0.8",
+    "--llama-topp", "0.9",
+    "--llama-seed", "1"
+  ]
+}

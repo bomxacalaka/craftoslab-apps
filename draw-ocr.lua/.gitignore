@@ -1,0 +1,4 @@
+/.data/
+/model/*.pt
+__pycache__/
+*.log

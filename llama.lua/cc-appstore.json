@@ -1,0 +1,17 @@
+{
+  "id": "llama-lua",
+  "name": "Llama",
+  "icon": "icon.png",
+  "iconBackground": "#236960",
+  "entry": "llama2.lua",
+  "arguments": [
+    "--model", "models/stories260K.bin",
+    "--tokenizer", "models/tok512.bin",
+    "--steps", "200",
+    "--temperature", "0",
+    "--topp", "0.9",
+    "--seed", "1",
+    "--benchmark-runs", "1",
+    "--prompt", "Once upon a time"
+  ]
+}

@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#171819">
+  <title>Blocksmith — Minecraft Item Editor</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="Blocksmith home">
+      <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+      <span><strong>BLOCKSMITH</strong><small>ITEM WORKBENCH</small></span>
+    </a>
+    <div class="file-name" title="Automatically saved in this browser"><span class="status-dot"></span><span id="documentName">untitled_item.png</span><small>AUTOSAVED</small></div>
+    <div class="top-actions">
+      <button class="button button-muted new-button" id="newButton" type="button">New</button>
+      <button class="button button-muted" id="importButton" type="button">Import image</button>
+      <div class="export-group">
+        <label for="exportFormat">Export format</label>
+        <select id="exportFormat" aria-label="Export format">
+          <option value="png">PNG</option>
+          <option value="webp">WEBP</option>
+        </select>
+        <button class="button button-primary" id="exportButton" type="button">Export PNG <span aria-hidden="true">↓</span></button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="editor-tabs" aria-label="Editor type">
+    <a class="active" href="index.html"><span class="tab-dot"></span>Static item</a>
+    <a href="animation.html"><span class="tab-play">▶</span>Animated sprite</a>
+  </nav>
+
+  <main class="workspace">
+    <aside class="panel tools-panel" aria-label="Drawing tools">
+      <div class="panel-heading"><span>TOOLS</span><small>SHORTCUT</small></div>
+      <div class="tool-list" role="toolbar" aria-label="Pixel tools">
+        <button class="tool active" data-tool="pencil" title="Pencil (B)"><span class="tool-icon pencil-icon"></span><span>Pencil</span><kbd>B</kbd></button>
+        <button class="tool" data-tool="variable" title="Variable pencil (V)"><span class="tool-icon variable-icon">✦</span><span>Variable pencil</span><kbd>V</kbd></button>
+        <button class="tool" data-tool="eraser" title="Eraser (E)"><span class="tool-icon eraser-icon"></span><span>Eraser</span><kbd>E</kbd></button>
+        <button class="tool" data-tool="picker" title="Pick colour (I)"><span class="tool-icon picker-icon"></span><span>Pick colour</span><kbd>I</kbd></button>
+      </div>
+
+      <div class="control-section">
+        <div class="control-label"><label for="sizeRange">PENCIL SIZE</label><output id="sizeOutput">1 px</output></div>
+        <input id="sizeRange" type="range" min="1" max="4" value="1">
+        <div class="range-ticks"><span>1</span><span>2</span><span>3</span><span>4</span></div>
+      </div>
+
+      <div class="control-section variation-control" id="variationControl">
+        <div class="control-label"><label for="variationRange">COLOUR STRENGTH VARIATION</label><output id="variationOutput">24%</output></div>
+        <input id="variationRange" type="range" min="0" max="100" value="24">
+        <div class="variation-scale"><span>STEADY</span><span>STRONG</span></div>
+        <p>Randomly lightens or darkens each pixel while preserving its colour.</p>
+      </div>
+    </aside>
+
+    <section class="canvas-area" id="dropZone">
+      <div class="canvas-toolbar">
+        <div class="history-actions">
+          <button class="icon-button" id="undoButton" type="button" title="Undo (Ctrl+Z)" disabled>↶</button>
+          <button class="icon-button" id="redoButton" type="button" title="Redo (Ctrl+Shift+Z)" disabled>↷</button>
+          <span class="divider"></span>
+          <label class="grid-toggle"><input id="gridToggle" type="checkbox" checked><span></span> Pixel grid</label>
+        </div>
+        <div class="zoom-control">
+          <button class="zoom-button" id="zoomOut" type="button" aria-label="Zoom out">−</button>
+          <output id="zoomOutput">2400%</output>
+          <button class="zoom-button" id="zoomIn" type="button" aria-label="Zoom in">+</button>
+        </div>
+      </div>
+
+      <div class="canvas-stage">
+        <div class="canvas-wrap" id="canvasWrap">
+          <canvas id="editorCanvas" width="16" height="16" aria-label="Editable pixel art canvas"></canvas>
+          <canvas id="gridCanvas" width="16" height="16" aria-hidden="true"></canvas>
+        </div>
+        <div class="drop-message" id="dropMessage"><strong>Drop PNG or WebP to import</strong><span>Your current work will be replaced</span></div>
+      </div>
+
+      <footer class="canvas-footer">
+        <span id="dimensions">16 × 16 px</span>
+        <span class="footer-tip"><i></i> PNG / WEBP · transparency supported</span>
+      </footer>
+    </section>
+
+    <aside class="panel colour-panel" aria-label="Colour controls">
+      <div class="panel-heading"><span>COLOUR PALETTE</span></div>
+      <div class="current-colour">
+        <button id="colourPreview" type="button" aria-label="Open colour picker"></button>
+        <div><small>CURRENT COLOUR</small><strong id="hexValue">#EEE846</strong></div>
+        <input id="colourInput" type="color" value="#eee846" aria-label="Choose colour">
+      </div>
+      <div class="swatches" id="swatches" aria-label="Colour swatches"></div>
+      <button class="add-swatch" id="addSwatch" type="button"><span>＋</span> Add current colour</button>
+
+      <div class="recent-section">
+        <div class="subheading"><span>FROM THIS ITEM</span><button id="refreshPalette" type="button" title="Refresh colours">↻</button></div>
+        <div class="item-swatches" id="itemSwatches"></div>
+      </div>
+
+      <div class="inventory-preview-section">
+        <div class="subheading"><span>INVENTORY PREVIEW</span><small>1× SLOT</small></div>
+        <div class="inventory-preview-row">
+          <div class="inventory-slot" aria-label="Minecraft inventory slot preview">
+            <canvas id="inventoryPreview" width="18" height="18"></canvas>
+          </div>
+          <div class="preview-caption"><strong>True GUI ratio</strong><span>18 × 18 slot · 16 × 16 item</span></div>
+        </div>
+      </div>
+
+      <div class="help-card">
+        <span class="help-icon">?</span>
+        <div><strong>Drawing modifiers</strong><p><b>Alt + drag</b> straight line<br><b>Ctrl + Shift + click</b> fill bounded area<br><b>Ctrl + Shift + right-click</b> erase bounded area</p></div>
+      </div>
+    </aside>
+  </main>
+
+  <input id="fileInput" type="file" accept="image/png,image/webp,.png,.webp" hidden>
+  <script src="app.js"></script>
+</body>
+</html>

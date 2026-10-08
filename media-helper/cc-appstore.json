@@ -1,0 +1,181 @@
+{
+  "schemaVersion": 1,
+  "id": "media-helper",
+  "name": "Media",
+  "icon": "icon.png",
+  "iconBackground": "#7B342C",
+  "interface": {
+    "title": "Media",
+    "platformShell": true,
+    "settingsTitle": "Settings",
+    "status": "",
+    "layout": {
+      "maxWidth": 960,
+      "searchMaxWidth": 760,
+      "padding": 12,
+      "gap": 8,
+      "footerGap": 6,
+      "settingsMaxWidth": 760,
+      "settingsColumns": 2,
+      "settingsGap": 8,
+      "settingsTop": 34,
+      "settingsRowHeight": 23
+    },
+    "state": { "query": "", "mode": "video", "destination": "play" },
+    "components": [
+      {
+        "view": "main", "type": "input", "id": "query", "area": "search",
+        "placeholder": "Search YouTube…", "top": 25, "height": 24, "submit": "search",
+        "tooltip": "Type a title, artist, or topic. Press Enter to search YouTube locally on this PC."
+      },
+      {
+        "view": "main", "type": "button", "id": "search", "area": "searchAction",
+        "label": "", "compactLabel": "", "icon": "search", "action": "search", "top": 25, "width": 112, "height": 24,
+        "tooltip": "Search YouTube using the client's local yt-dlp installation."
+      },
+      {
+        "view": "main", "type": "cards", "id": "results", "area": "content",
+        "columns": 3, "rows": 2, "initialLimit": 6, "pageSize": 6,
+        "minCardWidth": 105, "top": 70, "bottom": 58, "activate": "play",
+        "image": "thumbnailUrl", "title": "title", "subtitle": "statsLabel", "selection": "selected"
+      },
+      {
+        "view": "main", "type": "toggle", "style": "apple", "onValue": "video", "trackWidth": 24, "trackHeight": 14, "animationMs": 180,
+        "id": "mode", "label": "Format", "area": "footerLeft", "height": 24, "handheldStyle": "button",
+        "tooltip": "Choose whether the selected result is prepared as video with audio or audio only.",
+        "options": [
+          { "value": "video", "label": "Video" },
+          { "value": "audio", "label": "Audio" }
+        ]
+      },
+      {
+        "view": "main", "type": "toggle", "style": "apple", "onValue": "play", "trackWidth": 24, "trackHeight": 14, "animationMs": 180,
+        "id": "destination", "label": "Action", "area": "footerCenter", "height": 24, "handheldStyle": "button",
+        "tooltip": "Play immediately on the open CC computer, or prepare and write an ordered floppy-disk set.",
+        "options": [
+          { "value": "play", "label": "Play now" },
+          { "value": "write", "label": "Write disks" }
+        ]
+      },
+      {
+        "view": "main", "type": "button", "id": "settings", "area": "footerRight",
+        "label": "Settings", "action": "settings", "width": 28, "height": 24
+      },
+      { "view": "main", "type": "status", "id": "status", "area": "status" },
+      { "view": "main", "type": "progress", "id": "progress", "area": "status" },
+
+      { "view": "quick", "type": "button", "id": "back10", "label": "Back 10s", "radialLabel": "Back 10s", "radial": true, "action": "back10" },
+      { "view": "quick", "type": "button", "id": "pause", "label": "Pause / play", "handheldLabel": "Pause", "radialLabel": "Pause", "radial": true, "action": "pause" },
+      { "view": "quick", "type": "button", "id": "forward10", "label": "Forward 10s", "radialLabel": "Forward 10s", "radial": true, "action": "forward10" },
+      { "view": "quick", "type": "button", "id": "stop", "label": "Stop", "radialLabel": "Stop", "radial": true, "action": "stop" },
+
+      {
+        "view": "settings", "type": "slider", "label": "Video quality", "compactLabel": "Quality", "binding": "videoProfile", "row": 0, "column": 0,
+        "tooltip": "Sets encoded terminal-cell resolution and frame rate. Higher presets improve detail but increase conversion, transfer, and server load.",
+        "options": [
+          { "value": "57x21x6", "label": "Lite · 57×21 @ 6" },
+          { "value": "76x28x8", "label": "Balanced · 76×28 @ 8" },
+          { "value": "100x37x10", "label": "High · 100×37 @ 10" },
+          { "value": "150x56x12", "label": "Ultra · 150×56 @ 12" },
+          { "value": "200x75x15", "label": "Extreme · 200×75 @ 15" }
+        ]
+      },
+      {
+        "view": "settings", "type": "slider", "label": "Transfer", "compactLabel": "Transfer", "binding": "transferProfile", "row": 0, "column": 1,
+        "tooltip": "Controls files and batches uploaded per client tick. Use Server safe if the Minecraft server struggles.",
+        "options": [
+          { "value": "2x1", "label": "Server safe" }, { "value": "4x1", "label": "Balanced" },
+          { "value": "8x2", "label": "Fast" }, { "value": "8x4", "label": "Maximum" }
+        ]
+      },
+      {
+        "view": "settings", "type": "slider", "label": "Palette", "compactLabel": "Palette", "binding": "paletteMode", "row": 1, "column": 0,
+        "tooltip": "Scene adaptive recalculates colors per segment, Video adaptive keeps a stable custom palette, and Classic CC uses Minecraft's fixed colors.",
+        "options": [
+          { "value": "segment", "label": "Scene adaptive" },
+          { "value": "video", "label": "Video adaptive" },
+          { "value": "cc", "label": "Classic CC" }
+        ]
+      },
+      {
+        "view": "settings", "type": "toggle", "style": "apple", "onValue": "true", "trackWidth": 24, "trackHeight": 14, "animationMs": 180, "label": "Dithering", "binding": "videoDithering", "row": 1, "column": 1,
+        "tooltip": "Mixes nearby palette colors to simulate extra shades. This improves gradients but may look grainier.",
+        "options": [{ "value": "true", "label": "On" }, { "value": "false", "label": "Off" }]
+      },
+      {
+        "view": "settings", "type": "toggle", "style": "apple", "onValue": "true", "trackWidth": 24, "trackHeight": 14, "animationMs": 180, "label": "Oversized videos", "compactLabel": "Long videos", "binding": "allowPartialLongVideos", "row": 2, "column": 0,
+        "showStateLabel": false,
+        "tooltip": "Keep the longest memory-safe prefix of a very large video, or fail rather than truncating it.",
+        "options": [{ "value": "true", "label": "Keep prefix" }, { "value": "false", "label": "Fail" }]
+      },
+      {
+        "view": "settings", "type": "slider", "label": "Audio clarity", "compactLabel": "Audio", "binding": "audioFilterMode", "row": 2, "column": 1,
+        "tooltip": "Original preserves raw DFPWM. Clean reduces radio hiss. Strong filters more noise but softens bright sounds.",
+        "options": [{ "value": "original", "label": "Original" }, { "value": "clean", "label": "Clean" }, { "value": "strong", "label": "Strong" }]
+      },
+      {
+        "view": "settings", "type": "slider", "label": "Disk RAM", "binding": "floppyWriterRamMiB", "row": 3, "column": 0,
+        "tooltip": "Sets the rolling payload window used while writing disks. Larger values reduce refill waits but use more CraftOS memory.",
+        "options": [{ "value": "2", "label": "2 MiB" }, { "value": "5", "label": "5 MiB" }, { "value": "10", "label": "10 MiB" }, { "value": "20", "label": "20 MiB" }, { "value": "40", "label": "40 MiB" }, { "value": "64", "label": "64 MiB" }]
+      },
+      {
+        "view": "settings", "type": "slider", "label": "Disk pacing", "binding": "floppyUploadPacing", "row": 3, "column": 1,
+        "tooltip": "Controls disk upload timing. Safe is recommended for multiplayer; faster modes can overload a slow server.",
+        "options": [{ "value": "safe", "label": "Safe" }, { "value": "balanced", "label": "Balanced" }, { "value": "fast", "label": "Fast" }, { "value": "turbo", "label": "Turbo" }]
+      },
+      {
+        "view": "settings", "type": "setting", "label": "Input lock", "binding": "floppyInputSide", "row": 4, "column": 0,
+        "tooltip": "Relay side controlling the input hopper. Auto discovers the side during lane calibration.",
+        "options": [{ "value": "auto", "label": "Auto" }, { "value": "top", "label": "Top" }, { "value": "bottom", "label": "Bottom" }, { "value": "left", "label": "Left" }, { "value": "right", "label": "Right" }, { "value": "front", "label": "Front" }, { "value": "back", "label": "Back" }]
+      },
+      {
+        "view": "settings", "type": "setting", "label": "Output lock", "binding": "floppyOutputSide", "row": 4, "column": 1,
+        "tooltip": "Relay side controlling the output hopper. Auto discovers the side during lane calibration.",
+        "options": [{ "value": "auto", "label": "Auto" }, { "value": "top", "label": "Top" }, { "value": "bottom", "label": "Bottom" }, { "value": "left", "label": "Left" }, { "value": "right", "label": "Right" }, { "value": "front", "label": "Front" }, { "value": "back", "label": "Back" }]
+      },
+
+      { "view": "settings", "type": "settingInput", "label": "Custom width", "binding": "videoWidth", "row": 6, "xPercent": 0, "widthPercent": 32, "tooltip": "Encoded width in CC character cells. Valid range: 8–240." },
+      { "view": "settings", "type": "settingInput", "label": "Custom height", "binding": "videoHeight", "row": 6, "xPercent": 34, "widthPercent": 32, "tooltip": "Encoded height in CC character cells. Valid range: 6–120." },
+      { "view": "settings", "type": "settingInput", "label": "Custom FPS", "binding": "videoFps", "row": 6, "xPercent": 68, "widthPercent": 32, "tooltip": "Frames per second. Valid range: 1–20; higher values require more processing and bandwidth." },
+      { "view": "settings", "type": "button", "label": "Apply custom resolution and FPS", "action": "apply_custom", "row": 7, "column": 0, "span": 2, "tooltip": "Clamp and save the three custom video values above for the next video conversion." },
+
+      { "view": "settings", "type": "button", "label": "Calibrate disk lanes", "action": "calibrate", "row": 8, "column": 0, "tooltip": "Discover every disk drive and relay lane and save their input/output mapping." },
+      { "view": "settings", "type": "button", "label": "Start erase appliance", "action": "disk_eraser", "row": 8, "column": 1, "tooltip": "Install an always-on app that erases incoming floppies across calibrated lanes." },
+      { "view": "settings", "type": "button", "label": "Install audio disk player", "action": "audio_disk", "row": 9, "column": 0, "tooltip": "Install the startup appliance that accepts, orders, and plays audio disk sets." },
+      { "view": "settings", "type": "button", "label": "Install video disk player", "action": "video_disk", "row": 9, "column": 1, "tooltip": "Install the synchronized rolling video-and-audio disk appliance." },
+      { "view": "settings", "type": "button", "label": "Install wireless receiver", "action": "wireless", "row": 10, "column": 0, "tooltip": "Install a startup receiver for wireless or Ender-modem audio and attached speakers." },
+      { "view": "settings", "type": "button", "label": "Install jukebox", "action": "jukebox", "row": 10, "column": 1, "tooltip": "Install the standalone monitor or pocket-computer jukebox interface." },
+      { "view": "settings", "type": "button", "label": "Cancel current operation", "action": "cancel", "row": 11, "column": 0, "tooltip": "Stop the active upload, installer, disk writer, or playback handoff." },
+      { "view": "settings", "type": "button", "label": "Erase cached media…", "action": "clear_cache", "row": 11, "column": 1, "tooltip": "Delete local downloads and conversions, thumbnails, and this computer's cached video. Requires confirmation." },
+      { "view": "settings", "type": "button", "label": "CraftOS terminal", "action": "terminal", "row": 12, "column": 0 },
+      { "view": "settings", "type": "button", "label": "Done", "action": "back", "row": 12, "column": 1 }
+    ],
+    "actions": {
+      "search": {
+        "handler": "media.youtube_search",
+        "input": { "query": "$query" },
+        "output": "results"
+      },
+      "play": {
+        "handler": "media.play",
+        "input": { "item": "$selected", "mode": "$mode" }
+      },
+      "back10": { "handler": "media.playback_control", "operation": "back10" },
+      "pause": { "handler": "media.playback_control", "operation": "pause" },
+      "forward10": { "handler": "media.playback_control", "operation": "forward10" },
+      "stop": { "handler": "media.playback_control", "operation": "stop" },
+      "settings": { "handler": "ui.view", "view": "settings" },
+      "back": { "handler": "ui.view", "view": "main" },
+      "terminal": { "handler": "ui.terminal" },
+      "apply_custom": { "handler": "settings.apply" },
+      "calibrate": { "handler": "media.utility", "operation": "calibrate_disks" },
+      "disk_eraser": { "handler": "media.utility", "operation": "install_disk_eraser" },
+      "audio_disk": { "handler": "media.utility", "operation": "install_audio_disk_player" },
+      "video_disk": { "handler": "media.utility", "operation": "install_video_disk_player" },
+      "wireless": { "handler": "media.utility", "operation": "install_wireless_receiver" },
+      "jukebox": { "handler": "media.utility", "operation": "install_jukebox" },
+      "cancel": { "handler": "media.utility", "operation": "cancel" },
+      "clear_cache": { "handler": "media.utility", "operation": "clear_cache" }
+    }
+  }
+}
