@@ -12,6 +12,8 @@ This project contains the Lua inference implementation, the FP32 `stories260K` c
 - `sync-to-minecraft.*` — optional deployment helpers for the separate CC: App mod.
 - `cc-appstore.json` — the CC: App launch manifest copied by the sync helpers.
 
+Note: the [`draw-ocr.lua`](../draw-ocr.lua/) app vendors a byte-identical copy of this project's `llama2.lua` and `models/` under its own `llama/` directory so it stays self-contained. When you update those files, refresh the vendored copy with `../draw-ocr.lua/tools/update-llama.sh`.
+
 ## Run with CraftOS-PC
 
 ```bash

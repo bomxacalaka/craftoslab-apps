@@ -28,12 +28,15 @@ done
 [[ -d "$profile" ]] || { echo "Minecraft profile not found: $profile" >&2; exit 1; }
 profile=$(cd "$profile" && pwd -P)
 project=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
-llama_project=$(cd "$project/../llama.lua" && pwd -P)
 [[ -f "$project/model/letters.bin" ]] || { echo "Missing model/letters.bin. Train or restore the model first." >&2; exit 1; }
 [[ -f "$project/model/digits.bin" ]] || { echo "Missing model/digits.bin. Train or restore the model first." >&2; exit 1; }
-[[ -f "$llama_project/llama2.lua" ]] || { echo "Missing sibling llama.lua/llama2.lua." >&2; exit 1; }
-[[ -f "$llama_project/models/stories260K.bin" ]] || { echo "Missing Llama stories260K model." >&2; exit 1; }
-[[ -f "$llama_project/models/tok512.bin" ]] || { echo "Missing Llama tokenizer." >&2; exit 1; }
+llama_project="$project/llama"
+if [[ ! -f "$llama_project/llama2.lua" || ! -f "$llama_project/models/stories260K.bin" || ! -f "$llama_project/models/tok512.bin" ]]; then
+    llama_project=$(cd "$project/../llama.lua" 2>/dev/null && pwd -P) || llama_project="$project/../llama.lua"
+fi
+[[ -f "$llama_project/llama2.lua" ]] || { echo "Missing Llama runtime: $project/llama/llama2.lua (or the sibling llama.lua/llama2.lua). Refresh with tools/update-llama.sh." >&2; exit 1; }
+[[ -f "$llama_project/models/stories260K.bin" ]] || { echo "Missing Llama stories260K model under $llama_project/models/" >&2; exit 1; }
+[[ -f "$llama_project/models/tok512.bin" ]] || { echo "Missing Llama tokenizer under $llama_project/models/" >&2; exit 1; }
 apps="$profile/cc-apps/apps"
 destination="$apps/draw-ocr"
 staging="$apps/.draw-ocr-staging-$$"

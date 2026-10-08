@@ -17,12 +17,17 @@ $Model = Join-Path $PSScriptRoot 'model\letters.bin'
 if (-not (Test-Path -LiteralPath $Model)) { throw 'Missing model\letters.bin. Train or restore the model first.' }
 $DigitModel = Join-Path $PSScriptRoot 'model\digits.bin'
 if (-not (Test-Path -LiteralPath $DigitModel)) { throw 'Missing model\digits.bin. Train or restore the model first.' }
-$LlamaProject = Join-Path (Split-Path -Parent $PSScriptRoot) 'llama.lua'
+$LlamaProject = Join-Path $PSScriptRoot 'llama'
+if (-not (Test-Path -LiteralPath (Join-Path $LlamaProject 'llama2.lua'))) {
+    $LlamaProject = Join-Path (Split-Path -Parent $PSScriptRoot) 'llama.lua'
+}
 $LlamaProgram = Join-Path $LlamaProject 'llama2.lua'
 $LlamaModel = Join-Path $LlamaProject 'models\stories260K.bin'
 $LlamaTokenizer = Join-Path $LlamaProject 'models\tok512.bin'
 foreach ($Required in @($LlamaProgram, $LlamaModel, $LlamaTokenizer)) {
-    if (-not (Test-Path -LiteralPath $Required)) { throw "Missing Llama asset: $Required" }
+    if (-not (Test-Path -LiteralPath $Required)) {
+        throw "Missing Llama asset: $Required (refresh the in-tree llama/ copy with tools\update-llama.sh)"
+    }
 }
 $Profile = (Resolve-Path -LiteralPath $Profile).Path
 $Apps = Join-Path $Profile 'cc-apps\apps'

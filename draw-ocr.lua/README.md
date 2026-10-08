@@ -18,7 +18,7 @@ On Windows:
 .\sync-to-minecraft.ps1
 ```
 
-The scripts automatically select the CurseForge profile named `CraftOS` and compose this project with the sibling [`llama.lua`](../llama.lua/) runtime and TinyStories assets. Open a CC:Tweaked computer at its shell prompt, press **F8**, then select **OCR**.
+The scripts automatically select the CurseForge profile named `CraftOS` and deploy this project, including its vendored copy of the [`llama.lua`](../llama.lua/) runtime and TinyStories assets under `llama/`. Open a CC:Tweaked computer at its shell prompt, press **F8**, then select **OCR**.
 
 ## Controls
 
@@ -41,7 +41,7 @@ The status area shows the top two predictions and confidence scores.
 
 ## Llama generation
 
-The bundled `stories260K` checkpoint is the compact TinyStories Llama 2 model from the sibling project. It is a text-continuation model rather than an instruction-tuned chat assistant: **SEND** asks it to continue what was written. Generation defaults to 160 total steps, temperature 0.8, top-p 0.9, and seed 1. These values are configurable in `cc-appstore.json`.
+The vendored `stories260K` checkpoint is the compact TinyStories Llama 2 model from the sibling project. It is a text-continuation model rather than an instruction-tuned chat assistant: **SEND** asks it to continue what was written. Generation defaults to 160 total steps, temperature 0.8, top-p 0.9, and seed 1. These values are configurable in `cc-appstore.json`.
 
 Generation runs locally without HTTP. Monitor peripherals are rescanned when it finishes, so removing or resizing a monitor during inference still restores the UI on the best available display.
 
@@ -89,8 +89,9 @@ Training downloads EMNIST into `.data/`, evaluates every epoch, folds batch norm
 
 - `ocr.lua` — drawing UI, preprocessing, model loader, and CNN inference.
 - `model/letters.bin` and `model/digits.bin` — trained models used in game.
-- `../llama.lua/llama2.lua` and its `models/` — composed into `llama/` by the sync scripts rather than duplicated in source control.
+- `llama/llama2.lua` and `llama/models/` — a vendored, byte-identical copy of the sibling [`llama.lua`](../llama.lua/) project (MIT; port of [karpathy/llama2.c](https://github.com/karpathy/llama2.c)). Keep it current with `tools/update-llama.sh`.
 - `tools/train.py` — reproducible training and export pipeline.
+- `tools/update-llama.sh` — refreshes the vendored `llama/` copy and its `SHA256SUMS` entries from the sibling project.
 - `tools/verify_model.py` — exported-format and accuracy verification.
 - `cc-appstore.json` — CC: App launch manifest.
 - `sync-to-minecraft.*` — atomic deployment scripts.
