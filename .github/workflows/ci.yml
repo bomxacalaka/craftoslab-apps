@@ -20,7 +20,7 @@ jobs:
           while IFS= read -r -d '' file; do
             count=$((count+1))
             /tmp/lua-5.2.4/src/luac -p "$file" || fail=1
-          done < <(find . -name '*.lua' -print0)
+          done < <(find . -name '*.lua' -type f -print0)
           echo "Checked $count Lua file(s) with Lua 5.2"
           exit $fail
       - name: Verify model checksums
