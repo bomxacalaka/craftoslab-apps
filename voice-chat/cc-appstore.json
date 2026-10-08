@@ -18,7 +18,8 @@
       "soundFeedback": "false",
       "pushToTalk": "false",
       "voiceVolume": "100",
-      "noiseReduction": "1"
+      "noiseReduction": "1",
+      "myNumber": "0"
     },
     "components": [
       {
@@ -142,6 +143,16 @@
         ]
       },
       {
+        "view": "main",
+        "type": "text",
+        "id": "myNumber",
+        "binding": "myNumber",
+        "label": "My number",
+        "row": 5,
+        "height": 24,
+        "tooltip": "Your unique 4-digit number on this world. Share it so others can call you."
+      },
+      {
         "view": "quick",
         "type": "button",
         "id": "volumeDown",
@@ -158,6 +169,16 @@
         "radialLabel": "Volume up",
         "radial": false,
         "action": "volumeUp"
+      },
+      {
+        "view": "quick",
+        "type": "button",
+        "id": "dial",
+        "label": "Dial",
+        "radialLabel": "Dial",
+        "radial": false,
+        "action": "dial",
+        "tooltip": "Open the keypad and dial a 4-digit number."
       }
     ],
     "actions": {
@@ -165,7 +186,9 @@
       "feedback": { "handler": "voice.feedback_toggle" },
       "pushToTalk": { "handler": "voice.push_to_talk_toggle" },
       "volumeDown": { "handler": "voice.volume_down" },
-      "volumeUp": { "handler": "voice.volume_up" }
+      "volumeUp": { "handler": "voice.volume_up" },
+      "dial": { "handler": "voice.dial" },
+      "hangup": { "handler": "voice.hangup" }
     }
   }
 }
