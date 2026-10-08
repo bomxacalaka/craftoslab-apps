@@ -18,6 +18,8 @@ The hidden screen still relies on the pocket computer's active server menu. You 
 
 Phone also provides optional local sound feedback and push-to-talk. The registered defaults are **V** for Push to Talk and hold **R** for the radial menu; both can be rebound under Minecraft Controls → CC: App. Right-click a Phone toggle to pin or unpin it from the radial menu, then hold R, point at an action, and release.
 
+**Noise reduction** (Phone screen, "Noise reduction" slider) gates background noise in the microphone path before DFPWM encoding. It is **on by default at Low**; choose Off, Low, Medium, or High depending on how noisy the room is. The choice persists in `phone-controls.json` in the profile's `cc-apps` directory.
+
 ## Install or hot reload the manifest
 
 ```bash

@@ -17,7 +17,8 @@
       "voiceEnabled": "false",
       "soundFeedback": "false",
       "pushToTalk": "false",
-      "voiceVolume": "100"
+      "voiceVolume": "100",
+      "noiseReduction": "1"
     },
     "components": [
       {
@@ -120,6 +121,24 @@
           { "value": "180", "label": "180%" },
           { "value": "190", "label": "190%" },
           { "value": "200", "label": "200%" }
+        ]
+      },
+      {
+        "view": "main",
+        "type": "slider",
+        "id": "noiseReduction",
+        "binding": "noiseReduction",
+        "label": "Noise reduction",
+        "row": 4,
+        "height": 24,
+        "trackWidth": 62,
+        "handleSize": 13,
+        "tooltip": "Gates background noise in the microphone before encoding. Off keeps the raw signal; Low is a gentle gate, Medium and High are progressively stricter.",
+        "options": [
+          { "value": "0", "label": "Off" },
+          { "value": "1", "label": "Low" },
+          { "value": "2", "label": "Medium" },
+          { "value": "3", "label": "High" }
         ]
       },
       {
