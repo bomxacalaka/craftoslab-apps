@@ -2,6 +2,7 @@
 
 const DEFAULT_SWATCHES = ["#eee846", "#e6a83b", "#d46536", "#9c3d3d", "#6e8f3c", "#3f7547", "#48a7a0", "#477fba", "#4d55a2", "#83549b", "#cf7194", "#efe4d0", "#9b8c77", "#5d5b57", "#292b2b", "#080909"];
 const STORAGE_KEY = "blocksmith-item-project-v1";
+const JSON_FORMAT = "blocksmith-item";
 
 const canvas = document.querySelector("#editorCanvas");
 const gridCanvas = document.querySelector("#gridCanvas");
@@ -10,6 +11,7 @@ const gridCtx = gridCanvas.getContext("2d");
 const canvasWrap = document.querySelector("#canvasWrap");
 const dropZone = document.querySelector("#dropZone");
 const fileInput = document.querySelector("#fileInput");
+const jsonInput = document.querySelector("#jsonInput");
 const colourInput = document.querySelector("#colourInput");
 const inventoryPreview = document.querySelector("#inventoryPreview");
 const inventoryCtx = inventoryPreview.getContext("2d");
@@ -333,6 +335,7 @@ function loadImage(source, filename, remember = true, preferredFormat = null) {
 }
 
 function importFile(file) {
+  if (file && (file.type === "application/json" || /\.json$/i.test(file.name))) { importJsonFile(file); return; }
   const supportedType = file && ["image/png", "image/webp"].includes(file.type);
   const supportedName = file && /\.(?:png|webp)$/i.test(file.name);
   if (!file || (!supportedType && !supportedName)) {
@@ -342,6 +345,66 @@ function importFile(file) {
   const reader = new FileReader();
   reader.onload = () => loadImage(reader.result, file.name);
   reader.readAsDataURL(file);
+}
+
+function projectPayload() {
+  return {
+    image: canvas.toDataURL("image/png"),
+    filename: state.filename,
+    colour: state.colour,
+    size: state.size,
+    variation: state.variation,
+    exportFormat: state.exportFormat,
+    swatches: state.swatches,
+  };
+}
+
+function downloadJson(object, filename) {
+  const blob = new Blob([`${JSON.stringify(object, null, 2)}\n`], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+function exportJson() {
+  const baseName = (state.filename || "minecraft_item").replace(/\.(?:png|webp)$/i, "");
+  downloadJson({ ...projectPayload(), format: JSON_FORMAT, version: 1 }, `${baseName}.json`);
+}
+
+function importJsonFile(file) {
+  const reader = new FileReader();
+  reader.onload = () => {
+    let parsed;
+    try {
+      parsed = JSON.parse(reader.result);
+    } catch (error) {
+      return alert("That file is not a valid JSON project file.");
+    }
+    if (parsed?.format === "blocksmith-animation") return alert("That is an animated sprite project — open the Animated sprite tab to import it.");
+    if (parsed?.format !== JSON_FORMAT) return alert("That file is not a Blocksmith item project for this editor.");
+    if (parsed.version !== undefined && parsed.version !== 1) return alert(`This project file is version ${parsed.version}; this editor understands version 1.`);
+    if (typeof parsed.image !== "string" || !parsed.image) return alert("That file is not a complete Blocksmith item project.");
+    if (!confirm(`Import ${file.name}? This replaces your current work (you can still undo).`)) return;
+    applySavedSettings(parsed);
+    loadImage(parsed.image, parsed.filename || "untitled_item.png", true, parsed.exportFormat);
+  };
+  reader.readAsText(file);
+}
+
+function applySavedSettings(saved) {
+  if (/^#[0-9a-f]{6}$/i.test(saved.colour || "")) state.colour = saved.colour.toLowerCase();
+  if (Number.isInteger(saved.size) && saved.size >= 1 && saved.size <= 4) state.size = saved.size;
+  if (Number.isFinite(saved.variation) && saved.variation >= 0 && saved.variation <= 100) state.variation = saved.variation;
+  if (["png", "webp"].includes(saved.exportFormat)) state.exportFormat = saved.exportFormat;
+  if (Array.isArray(saved.swatches)) state.swatches = saved.swatches.filter(colour => /^#[0-9a-f]{6}$/i.test(colour)).slice(0, 48);
+  document.querySelector("#sizeRange").value = state.size;
+  document.querySelector("#sizeOutput").textContent = `${state.size} px`;
+  document.querySelector("#variationRange").value = state.variation;
+  document.querySelector("#variationOutput").textContent = `${state.variation}%`;
+  setColour(state.colour);
 }
 
 function exportImage() {
@@ -368,15 +431,7 @@ function setExportFormat(format) {
 function saveProject() {
   if (!canvas.width || !canvas.height) return;
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({
-      image: canvas.toDataURL("image/png"),
-      filename: state.filename,
-      colour: state.colour,
-      size: state.size,
-      variation: state.variation,
-      exportFormat: state.exportFormat,
-      swatches: state.swatches,
-    }));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(projectPayload()));
   } catch (error) {
     console.warn("Could not save the current item locally.", error);
   }
@@ -398,16 +453,7 @@ function initializeProject() {
   try {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
     if (saved?.image) {
-      if (/^#[0-9a-f]{6}$/i.test(saved.colour || "")) state.colour = saved.colour.toLowerCase();
-      if (Number.isInteger(saved.size) && saved.size >= 1 && saved.size <= 4) state.size = saved.size;
-      if (Number.isFinite(saved.variation) && saved.variation >= 0 && saved.variation <= 100) state.variation = saved.variation;
-      if (["png", "webp"].includes(saved.exportFormat)) state.exportFormat = saved.exportFormat;
-      if (Array.isArray(saved.swatches)) state.swatches = saved.swatches.filter(colour => /^#[0-9a-f]{6}$/i.test(colour)).slice(0, 48);
-      document.querySelector("#sizeRange").value = state.size;
-      document.querySelector("#sizeOutput").textContent = `${state.size} px`;
-      document.querySelector("#variationRange").value = state.variation;
-      document.querySelector("#variationOutput").textContent = `${state.variation}%`;
-      setColour(state.colour);
+      applySavedSettings(saved);
       loadImage(saved.image, saved.filename || "untitled_item.png", false, saved.exportFormat);
       return;
     }
@@ -435,8 +481,11 @@ function fitZoom() {
 }
 
 document.querySelector("#importButton").addEventListener("click", () => fileInput.click());
+document.querySelector("#exportJsonButton").addEventListener("click", exportJson);
+document.querySelector("#importJsonButton").addEventListener("click", () => jsonInput.click());
 document.querySelector("#newButton").addEventListener("click", newBlankCanvas);
 fileInput.addEventListener("change", () => { importFile(fileInput.files[0]); fileInput.value = ""; });
+jsonInput.addEventListener("change", () => { importFile(jsonInput.files[0]); jsonInput.value = ""; });
 document.querySelector("#exportButton").addEventListener("click", exportImage);
 document.querySelector("#exportFormat").addEventListener("change", event => {
   setExportFormat(event.target.value);

@@ -2,6 +2,7 @@
 
 const DEFAULT_SWATCHES = ["#eee846", "#e6a83b", "#d46536", "#9c3d3d", "#6e8f3c", "#3f7547", "#48a7a0", "#477fba", "#4d55a2", "#83549b", "#cf7194", "#efe4d0", "#9b8c77", "#5d5b57", "#292b2b", "#080909"];
 const STORAGE_KEY = "blocksmith-animation-project-v1";
+const JSON_FORMAT = "blocksmith-animation";
 const CC_TEXTURES = "assets/computercraft/textures/item";
 
 const canvas = document.querySelector("#editorCanvas");
@@ -11,6 +12,7 @@ const gridCtx = gridCanvas.getContext("2d");
 const canvasWrap = document.querySelector("#canvasWrap");
 const dropZone = document.querySelector("#dropZone");
 const fileInput = document.querySelector("#fileInput");
+const jsonInput = document.querySelector("#jsonInput");
 const colourInput = document.querySelector("#colourInput");
 const inventoryPreview = document.querySelector("#inventoryPreview");
 const inventoryCtx = inventoryPreview.getContext("2d");
@@ -551,7 +553,8 @@ function loadSpriteSheet(source, filename, options = {}) {
     state.exportFormat = options.exportFormat || (/\.webp$/i.test(filename) ? "webp" : "png");
     state.frametime = Math.max(1, Number(options.frametime) || 8);
     state.ccLayers = Boolean(options.ccLayers);
-    state.undo.length = state.redo.length = 0;
+    state.undo = options.restoreUndo ? [options.restoreUndo] : [];
+    state.redo.length = 0;
     document.querySelector("#documentName").textContent = state.filename;
     document.querySelector("#exportFormat").value = state.exportFormat;
     document.querySelector("#frametimeInput").value = state.frametime;
@@ -568,6 +571,7 @@ function loadSpriteSheet(source, filename, options = {}) {
 }
 
 async function importFile(file) {
+  if (file && (file.type === "application/json" || /\.json$/i.test(file.name))) { await importJsonFile(file); return; }
   const supported = file && (["image/png", "image/webp"].includes(file.type) || /\.(?:png|webp)$/i.test(file.name));
   if (!supported) return alert("Please choose a PNG or WebP sprite sheet.");
   const isCcBlink = /pocket_computer_blink/i.test(file.name);
@@ -575,6 +579,78 @@ async function importFile(file) {
   const reader = new FileReader();
   reader.onload = () => loadSpriteSheet(reader.result, file.name, { ccLayers: isCcBlink, bodyLayer, lightLayer });
   reader.readAsDataURL(file);
+}
+
+function projectPayload() {
+  return {
+    sheet: makeSheetCanvas().toDataURL("image/png"),
+    filename: state.filename,
+    currentFrame: state.currentFrame,
+    frametime: state.frametime,
+    exportFormat: state.exportFormat,
+    ccLayers: state.ccLayers,
+    activeLayer: state.activeLayer,
+    bodyLayer: state.bodyLayer ? imageDataCanvas(state.bodyLayer).toDataURL("image/png") : null,
+    lightLayer: state.lightLayer ? imageDataCanvas(state.lightLayer).toDataURL("image/png") : null,
+    colour: state.colour,
+    size: state.size,
+    variation: state.variation,
+    swatches: state.swatches,
+  };
+}
+
+function downloadJson(object, filename) {
+  const blob = new Blob([`${JSON.stringify(object, null, 2)}\n`], { type: "application/json" });
+  download(URL.createObjectURL(blob), filename, true);
+}
+
+function exportJson() {
+  downloadJson({ ...projectPayload(), format: JSON_FORMAT, version: 1 }, `${baseFilename()}.json`);
+}
+
+async function importJsonFile(file) {
+  const text = await new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsText(file);
+  });
+  let parsed;
+  try {
+    parsed = JSON.parse(text);
+  } catch (error) {
+    return alert("That file is not a valid JSON project file.");
+  }
+  if (parsed?.format === "blocksmith-item") return alert("That is a static item project — open the Static item tab to import it.");
+  if (parsed?.format !== JSON_FORMAT) return alert("That file is not a Blocksmith animation project for this editor.");
+  if (parsed.version !== undefined && parsed.version !== 1) return alert(`This project file is version ${parsed.version}; this editor understands version 1.`);
+  if (typeof parsed.sheet !== "string" || !parsed.sheet) return alert("That file is not a complete Blocksmith animation project.");
+  if (!confirm(`Import ${file.name}? This replaces your current work (you can still undo).`)) return;
+  applySavedSettings(parsed);
+  commitCurrentFrame();
+  const previous = historyEntry();
+  try {
+    const defaults = await ccAssetsPromise;
+    const [bodyLayer, lightLayer] = await Promise.all([
+      parsed.bodyLayer ? imageDataFromSource(parsed.bodyLayer) : Promise.resolve(defaults[0]),
+      parsed.lightLayer ? imageDataFromSource(parsed.lightLayer) : Promise.resolve(defaults[1]),
+    ]);
+    loadSpriteSheet(parsed.sheet, parsed.filename || "animated_item.png", { ...parsed, bodyLayer, lightLayer, restoreUndo: previous });
+  } catch (error) {
+    alert("That project file could not be opened.");
+  }
+}
+
+function applySavedSettings(saved) {
+  if (/^#[0-9a-f]{6}$/i.test(saved.colour || "")) state.colour = saved.colour.toLowerCase();
+  if (Number.isInteger(saved.size) && saved.size >= 1 && saved.size <= 4) state.size = saved.size;
+  if (Number.isFinite(saved.variation) && saved.variation >= 0 && saved.variation <= 100) state.variation = saved.variation;
+  if (Array.isArray(saved.swatches)) state.swatches = saved.swatches.filter(colour => /^#[0-9a-f]{6}$/i.test(colour)).slice(0, 48);
+  document.querySelector("#sizeRange").value = state.size;
+  document.querySelector("#sizeOutput").textContent = `${state.size} px`;
+  document.querySelector("#variationRange").value = state.variation;
+  document.querySelector("#variationOutput").textContent = `${state.variation}%`;
+  setColour(state.colour);
 }
 
 function newAnimation() {
@@ -797,21 +873,7 @@ function download(url, filename, revoke = false) {
 function saveProject() {
   if (!state.frames.length) return;
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({
-      sheet: makeSheetCanvas().toDataURL("image/png"),
-      filename: state.filename,
-      currentFrame: state.currentFrame,
-      frametime: state.frametime,
-      exportFormat: state.exportFormat,
-      ccLayers: state.ccLayers,
-      activeLayer: state.activeLayer,
-      bodyLayer: state.bodyLayer ? imageDataCanvas(state.bodyLayer).toDataURL("image/png") : null,
-      lightLayer: state.lightLayer ? imageDataCanvas(state.lightLayer).toDataURL("image/png") : null,
-      colour: state.colour,
-      size: state.size,
-      variation: state.variation,
-      swatches: state.swatches,
-    }));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(projectPayload()));
   } catch (error) {
     console.warn("Could not save the animation locally.", error);
   }
@@ -821,15 +883,7 @@ async function restoreProject() {
   try {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
     if (saved?.sheet) {
-      if (/^#[0-9a-f]{6}$/i.test(saved.colour || "")) state.colour = saved.colour.toLowerCase();
-      if (Number.isInteger(saved.size) && saved.size >= 1 && saved.size <= 4) state.size = saved.size;
-      if (Number.isFinite(saved.variation) && saved.variation >= 0 && saved.variation <= 100) state.variation = saved.variation;
-      if (Array.isArray(saved.swatches)) state.swatches = saved.swatches.filter(colour => /^#[0-9a-f]{6}$/i.test(colour)).slice(0, 48);
-      document.querySelector("#sizeRange").value = state.size;
-      document.querySelector("#sizeOutput").textContent = `${state.size} px`;
-      document.querySelector("#variationRange").value = state.variation;
-      document.querySelector("#variationOutput").textContent = `${state.variation}%`;
-      setColour(state.colour);
+      applySavedSettings(saved);
       const defaults = await ccAssetsPromise;
       const [bodyLayer, lightLayer] = await Promise.all([
         saved.bodyLayer ? imageDataFromSource(saved.bodyLayer) : Promise.resolve(defaults[0]),
@@ -858,12 +912,15 @@ function fitZoom() {
 
 document.querySelectorAll(".tool").forEach(button => button.addEventListener("click", () => selectTool(button.dataset.tool)));
 document.querySelector("#importButton").addEventListener("click", () => fileInput.click());
+document.querySelector("#exportJsonButton").addEventListener("click", exportJson);
+document.querySelector("#importJsonButton").addEventListener("click", () => jsonInput.click());
 document.querySelector("#newButton").addEventListener("click", newAnimation);
 document.querySelector("#ccPresetButton").addEventListener("click", async () => {
   const [bodyLayer, lightLayer] = await ccAssetsPromise;
   loadSpriteSheet(`${CC_TEXTURES}/pocket_computer_blink.png`, "pocket_computer_blink.png", { frametime: 8, ccLayers: true, bodyLayer, lightLayer });
 });
 fileInput.addEventListener("change", () => { importFile(fileInput.files[0]); fileInput.value = ""; });
+jsonInput.addEventListener("change", () => { importFile(jsonInput.files[0]); jsonInput.value = ""; });
 document.querySelector("#exportButton").addEventListener("click", exportPackZip);
 document.querySelector("#sheetButton").addEventListener("click", exportSheet);
 document.querySelector("#metaButton").addEventListener("click", exportMetadata);

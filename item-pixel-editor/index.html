@@ -17,6 +17,8 @@
     <div class="top-actions">
       <button class="button button-muted new-button" id="newButton" type="button">New</button>
       <button class="button button-muted" id="importButton" type="button">Import image</button>
+      <button class="button button-muted" id="exportJsonButton" type="button">Export JSON</button>
+      <button class="button button-muted" id="importJsonButton" type="button">Import JSON</button>
       <div class="export-group">
         <label for="exportFormat">Export format</label>
         <select id="exportFormat" aria-label="Export format">
@@ -77,12 +79,12 @@
           <canvas id="editorCanvas" width="16" height="16" aria-label="Editable pixel art canvas"></canvas>
           <canvas id="gridCanvas" width="16" height="16" aria-hidden="true"></canvas>
         </div>
-        <div class="drop-message" id="dropMessage"><strong>Drop PNG or WebP to import</strong><span>Your current work will be replaced</span></div>
+        <div class="drop-message" id="dropMessage"><strong>Drop PNG, WebP, or a JSON project to import</strong><span>Your current work will be replaced</span></div>
       </div>
 
       <footer class="canvas-footer">
         <span id="dimensions">16 × 16 px</span>
-        <span class="footer-tip"><i></i> PNG / WEBP · transparency supported</span>
+        <span class="footer-tip"><i></i> PNG / WEBP / JSON · transparency supported</span>
       </footer>
     </section>
 
@@ -118,7 +120,8 @@
     </aside>
   </main>
 
-  <input id="fileInput" type="file" accept="image/png,image/webp,.png,.webp" hidden>
+  <input id="fileInput" type="file" accept="image/png,image/webp,.png,.webp,.json" hidden>
+  <input id="jsonInput" type="file" accept="application/json,.json" hidden>
   <script src="app.js"></script>
 </body>
 </html>

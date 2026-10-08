@@ -17,6 +17,8 @@
     <div class="top-actions">
       <button class="button button-muted new-button" id="newButton" type="button">New</button>
       <button class="button button-muted" id="importButton" type="button">Import sheet</button>
+      <button class="button button-muted" id="exportJsonButton" type="button">Export JSON</button>
+      <button class="button button-muted" id="importJsonButton" type="button">Import JSON</button>
       <button class="button button-muted meta-button" id="metaButton" type="button">Export .mcmeta</button>
       <div class="export-group sheet-export-group">
         <label for="exportFormat">Export format</label>
@@ -79,7 +81,7 @@
           <canvas id="editorCanvas" width="16" height="16" aria-label="Editable animation frame"></canvas>
           <canvas id="gridCanvas" width="16" height="16" aria-hidden="true"></canvas>
         </div>
-        <div class="drop-message"><strong>Drop a vertical sprite sheet</strong><span>PNG or WebP · square frames stacked top to bottom</span></div>
+        <div class="drop-message"><strong>Drop a sprite sheet or JSON project</strong><span>PNG or WebP sheets · square frames stacked top to bottom</span></div>
       </div>
       <section class="timeline" aria-label="Animation timeline">
         <div class="layer-editor-bar">
@@ -106,7 +108,7 @@
       </section>
       <footer class="canvas-footer">
         <span id="dimensions">16 × 16 px · 2 frames</span>
-        <span class="footer-tip"><i></i> Minecraft vertical animation sheet</span>
+        <span class="footer-tip"><i></i> Minecraft vertical animation sheet · JSON projects</span>
       </footer>
     </section>
 
@@ -137,7 +139,8 @@
       </div>
     </aside>
   </main>
-  <input id="fileInput" type="file" accept="image/png,image/webp,.png,.webp" hidden>
+  <input id="fileInput" type="file" accept="image/png,image/webp,.png,.webp,.json" hidden>
+  <input id="jsonInput" type="file" accept="application/json,.json" hidden>
   <script src="animation.js"></script>
 </body>
 </html>

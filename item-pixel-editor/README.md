@@ -10,6 +10,10 @@ Then open <http://127.0.0.1:8787>. A first visit starts with a blank transparent
 
 Work is automatically stored in the browser and restored after refreshing the page, closing the browser, or restarting the web server. Use **New** to start another blank 16×16 item; the previous canvas remains available through undo until the page is closed.
 
+## JSON project files
+
+The browser autosave survives until someone clears the site's storage. **Export JSON** downloads the entire working file — canvas pixels, filename, colour, pencil size, variation, export format, and swatches — as a versioned JSON project file (a `<name>.json` whose `format` field is `blocksmith-item` and whose `version` is `1`). **Import JSON** opens such a file (a PNG/WebP or JSON file can also be dropped straight onto the editor); you are asked to confirm, the imported project takes over the canvas, and your previous work stays one `Ctrl/Cmd+Z` away. Importing a file that is not JSON, belongs to the other editor ("animated sprite"), or uses an unsupported version shows an error and leaves the current work untouched. The animated sprite editor works identically: its JSON projects use `format: "blocksmith-animation"` and additionally carry the full sheet, body/light layers, current frame, and frame timing.
+
 The sidebar includes a live Minecraft inventory preview built at the exact GUI ratio: an 18×18 slot cell containing a 16×16 item, enlarged with integer nearest-neighbour scaling.
 
 The variable pencil has a 0–100% colour-strength control. It randomly draws lighter and darker versions of the selected colour without changing its hue.
