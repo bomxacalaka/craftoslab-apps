@@ -27,28 +27,39 @@ done
 }
 [[ -d "$profile" ]] || { echo "Minecraft profile not found: $profile" >&2; exit 1; }
 profile=$(cd "$profile" && pwd -P)
-project=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+project=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
+[[ -f "$project/model/letters.bin" ]] || { echo "Missing model/letters.bin. Train or restore the model first." >&2; exit 1; }
+[[ -f "$project/model/digits.bin" ]] || { echo "Missing model/digits.bin. Train or restore the model first." >&2; exit 1; }
+llama_project="$project/llama"
+if [[ ! -f "$llama_project/llama2.lua" || ! -f "$llama_project/models/stories260K.bin" || ! -f "$llama_project/models/tok512.bin" ]]; then
+    llama_project=$(cd "$project/../llama.lua" 2>/dev/null && pwd -P) || llama_project="$project/../llama.lua"
+fi
+[[ -f "$llama_project/llama2.lua" ]] || { echo "Missing Llama runtime: $project/llama/llama2.lua (or the sibling llama.lua/llama2.lua). Refresh with tools/update-llama.sh." >&2; exit 1; }
+[[ -f "$llama_project/models/stories260K.bin" ]] || { echo "Missing Llama stories260K model under $llama_project/models/" >&2; exit 1; }
+[[ -f "$llama_project/models/tok512.bin" ]] || { echo "Missing Llama tokenizer under $llama_project/models/" >&2; exit 1; }
 apps="$profile/cc-apps/apps"
-destination="$apps/llama-lua"
-staging="$apps/.llama-lua-staging-$$"
-backup="$apps/.llama-lua-backup-$$"
-legacy_data="$profile/cc-programs/programs/llama-lua/data"
+destination="$apps/draw-ocr"
+staging="$apps/.draw-ocr-staging-$$"
+backup="$apps/.draw-ocr-backup-$$"
+legacy_data="$profile/cc-programs/programs/draw-ocr/data"
 
 cleanup() { rm -rf -- "$staging"; }
 trap cleanup EXIT
-mkdir -p "$staging/models"
-cp -f "$project/llama2.lua" "$staging/llama2.lua"
-cp -f "$project/models/tok512.bin" "$staging/models/tok512.bin"
-cp -f "$project/models/stories260K.bin" "$staging/models/stories260K.bin"
+mkdir -p "$staging/model" "$staging/llama/models"
+cp -f "$project/ocr.lua" "$staging/ocr.lua"
+cp -f "$project/model/letters.bin" "$staging/model/letters.bin"
+cp -f "$project/model/digits.bin" "$staging/model/digits.bin"
+cp -f "$llama_project/llama2.lua" "$staging/llama/llama2.lua"
+cp -f "$llama_project/models/stories260K.bin" "$staging/llama/models/stories260K.bin"
+cp -f "$llama_project/models/tok512.bin" "$staging/llama/models/tok512.bin"
 cp -f "$project/cc-appstore.json" "$staging/app.json"
 cp -f "$project/icon.png" "$staging/icon.png"
 if [[ -d "$destination/data" ]]; then
     mv "$destination/data" "$staging/data"
 elif [[ -d "$legacy_data" ]]; then
     mv "$legacy_data" "$staging/data"
-    echo "Migrated Llama data from the legacy cc-programs layout"
+    echo "Migrated Draw OCR data from the legacy cc-programs layout"
 fi
-
 if [[ -e "$destination" ]]; then mv "$destination" "$backup"; fi
 if ! mv "$staging" "$destination"; then
     [[ ! -e "$backup" ]] || mv "$backup" "$destination"
@@ -57,4 +68,4 @@ if ! mv "$staging" "$destination"; then
 fi
 [[ ! -e "$backup" ]] || rm -rf -- "$backup"
 trap - EXIT
-echo "Synced llama.lua to $destination"
+echo "Synced Draw OCR to $destination"

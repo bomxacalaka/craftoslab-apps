@@ -7,13 +7,13 @@ Media Helper is a JSON-only client app for CC: App 0.14.0+. CC: App renders the 
 Install CC: App 0.14.0 or newer, then run:
 
 ```bash
-./sync-to-minecraft.sh
+./.dev/sync-to-minecraft.sh
 ```
 
 On Windows:
 
 ```powershell
-.\sync-to-minecraft.ps1
+.\.dev\sync-to-minecraft.ps1
 ```
 
 Both scripts accept an explicit profile path (`--profile PATH` or `-Profile PATH`). Open a powered CC:Tweaked computer, attach a speaker and advanced monitor, press **F8**, and choose **Media**. CC: App renders its JSON as a native client interface.

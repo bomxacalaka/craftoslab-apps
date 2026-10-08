@@ -64,7 +64,7 @@ is_number "$top_p" && in_range "$top_p" 0 1 || die "Top-p must be from 0 to 1."
 [[ "$seed" =~ ^-?[0-9]+$ ]] || die "Seed must be an integer."
 [[ "$benchmark_runs" =~ ^[0-9]+$ ]] && in_range "$benchmark_runs" 1 100 || die "Benchmark runs must be an integer from 1 to 100."
 
-project=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+project=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
 if [[ -z "$executable" ]]; then
     if [[ "$backend" == accelerated ]]; then
         executable="$project/tools/craftos-accelerated/CraftOS-PC_console"

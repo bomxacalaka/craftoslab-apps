@@ -19,7 +19,7 @@ param(
     [string]$Prompt = ''
 )
 
-$projectRoot = $PSScriptRoot
+$projectRoot = Join-Path $PSScriptRoot '..'   # the app root (this script lives in .dev/)
 $standardExe = 'C:\Program Files\CraftOS-PC\CraftOS-PC_console.exe'
 $acceleratedExe = Join-Path $projectRoot 'tools\craftos-accelerated\CraftOS-PC_console.exe'
 $dataDirectory = Join-Path $projectRoot $(if ($Backend -eq 'accelerated') { '.craftos-jit-data' } else { '.craftos-data' })

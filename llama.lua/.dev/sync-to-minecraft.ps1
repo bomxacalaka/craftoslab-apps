@@ -2,6 +2,7 @@
 param([string]$Profile)
 
 $ErrorActionPreference = 'Stop'
+$Project = Join-Path $PSScriptRoot '..'   # the app root (this script lives in .dev/)
 if ([string]::IsNullOrWhiteSpace($Profile)) {
     $Instances = Join-Path $env:USERPROFILE 'curseforge\minecraft\Instances'
     if (Test-Path -LiteralPath $Instances) {
@@ -23,11 +24,11 @@ $LegacyData = Join-Path $Profile 'cc-programs\programs\llama-lua\data'
 
 try {
     New-Item -ItemType Directory -Path (Join-Path $Staging 'models') -Force | Out-Null
-    Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'llama2.lua') -Destination (Join-Path $Staging 'llama2.lua')
-    Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'models\tok512.bin') -Destination (Join-Path $Staging 'models\tok512.bin')
-    Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'models\stories260K.bin') -Destination (Join-Path $Staging 'models\stories260K.bin')
-    Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'cc-appstore.json') -Destination (Join-Path $Staging 'app.json')
-    Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'icon.png') -Destination (Join-Path $Staging 'icon.png')
+    Copy-Item -LiteralPath (Join-Path $Project 'llama2.lua') -Destination (Join-Path $Staging 'llama2.lua')
+    Copy-Item -LiteralPath (Join-Path $Project 'models\tok512.bin') -Destination (Join-Path $Staging 'models\tok512.bin')
+    Copy-Item -LiteralPath (Join-Path $Project 'models\stories260K.bin') -Destination (Join-Path $Staging 'models\stories260K.bin')
+    Copy-Item -LiteralPath (Join-Path $Project 'cc-appstore.json') -Destination (Join-Path $Staging 'app.json')
+    Copy-Item -LiteralPath (Join-Path $Project 'icon.png') -Destination (Join-Path $Staging 'icon.png')
     $Data = Join-Path $Destination 'data'
     if (Test-Path -LiteralPath $Data) { Move-Item -LiteralPath $Data -Destination (Join-Path $Staging 'data') }
     elseif (Test-Path -LiteralPath $LegacyData) {

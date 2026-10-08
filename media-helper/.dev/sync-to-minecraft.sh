@@ -27,7 +27,7 @@ done
 }
 [[ -d "$profile" ]] || { echo "Minecraft profile not found: $profile" >&2; exit 1; }
 profile=$(cd "$profile" && pwd -P)
-project=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+project=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
 apps="$profile/cc-apps/apps"
 destination="$apps/media-helper"
 staging="$apps/.media-helper-staging-$$"

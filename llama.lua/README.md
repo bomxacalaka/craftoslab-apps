@@ -8,28 +8,28 @@ This project contains the Lua inference implementation, the FP32 `stories260K` c
 
 - `llama2.lua` — checkpoint loader, tokenizer, Transformer forward pass, and sampler.
 - `models/` — the `stories260K` FP32 checkpoint and tokenizer.
-- `run.sh`, `run.ps1`, and `run.cmd` — desktop CraftOS-PC launchers.
-- `sync-to-minecraft.*` — optional deployment helpers for the separate CC: App mod.
+- `.dev/run.sh`, `.dev/run.ps1`, and `.dev/run.cmd` — desktop CraftOS-PC launchers (development tooling; excluded from the store package).
+- `.dev/sync-to-minecraft.*` — optional deployment helpers for the separate CC: App mod (excluded from the store package).
 - `cc-appstore.json` — the CC: App launch manifest copied by the sync helpers.
 
-Note: the [`draw-ocr.lua`](../draw-ocr.lua/) app vendors a byte-identical copy of this project's `llama2.lua` and `models/` under its own `llama/` directory so it stays self-contained. When you update those files, refresh the vendored copy with `../draw-ocr.lua/tools/update-llama.sh`.
+Note: the [`draw-ocr.lua`](../draw-ocr.lua/) app vendors a byte-identical copy of this project's `llama2.lua` and `models/` under its own `llama/` directory so it stays self-contained. When you update those files, refresh the vendored copy with `../draw-ocr.lua/.dev/tools/update-llama.sh`.
 
 ## Run with CraftOS-PC
 
 ```bash
-./run.sh --backend standard --steps 200 --temperature 0
+./.dev/run.sh --backend standard --steps 200 --temperature 0
 ```
 
 On Windows:
 
 ```powershell
-.\run.ps1 -Backend standard -Steps 200 -Temperature 0
+..devun.ps1 -Backend standard -Steps 200 -Temperature 0
 ```
 
 For a five-pass benchmark:
 
 ```bash
-./run.sh --backend standard --steps 200 --temperature 0 --benchmark-runs 5
+./.dev/run.sh --backend standard --steps 200 --temperature 0 --benchmark-runs 5
 ```
 
 The optional accelerated backend expects a portable CraftOS-PC Accelerated installation under `tools/craftos-accelerated`.
@@ -43,19 +43,19 @@ The optional accelerated backend expects a portable CraftOS-PC Accelerated insta
 The Minecraft integration lives in the `../../mod/cc-app` mod. Install that mod once, then sync this project after each edit:
 
 ```bash
-./sync-to-minecraft.sh
+./.dev/sync-to-minecraft.sh
 ```
 
 On Windows:
 
 ```powershell
-.\sync-to-minecraft.ps1
+.\.dev\sync-to-minecraft.ps1
 ```
 
 Both scripts automatically select the CurseForge profile named `CraftOS`. Override it when needed:
 
 ```bash
-./sync-to-minecraft.sh --profile "/path/to/another/profile"
+./.dev/sync-to-minecraft.sh --profile "/path/to/another/profile"
 ```
 
 The script atomically replaces:

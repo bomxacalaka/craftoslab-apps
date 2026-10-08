@@ -2,7 +2,7 @@
 # Refresh the vendored Llama runtime (llama/) from the sibling llama.lua project.
 set -euo pipefail
 
-project=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)
+project=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd -P)
 source="$project/../llama.lua"
 for required in "llama2.lua" "models/stories260K.bin" "models/tok512.bin"; do
     [[ -f "$source/$required" ]] || { echo "Missing $source/$required. Restore the sibling llama.lua project first." >&2; exit 1; }

@@ -39,7 +39,7 @@ The quick view's **App store** button opens the CC: App store screen over the Ph
 ## Install or hot reload the manifest
 
 ```bash
-./sync-to-minecraft.sh --profile "/path/to/minecraft/profile"
+./.dev/sync-to-minecraft.sh --profile "/path/to/minecraft/profile"
 ```
 
 Keep the Phone screen open while syncing to hot reload JSON layout changes. Java backend changes require rebuilding and reinstalling the CC: App JAR, followed by a Minecraft restart.
