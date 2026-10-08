@@ -168,14 +168,14 @@
       "back": { "handler": "ui.view", "view": "main" },
       "terminal": { "handler": "ui.terminal" },
       "apply_custom": { "handler": "settings.apply" },
-      "calibrate": { "handler": "media.utility", "operation": "calibrate_disks" },
-      "disk_eraser": { "handler": "media.utility", "operation": "install_disk_eraser" },
-      "audio_disk": { "handler": "media.utility", "operation": "install_audio_disk_player" },
-      "video_disk": { "handler": "media.utility", "operation": "install_video_disk_player" },
-      "wireless": { "handler": "media.utility", "operation": "install_wireless_receiver" },
-      "jukebox": { "handler": "media.utility", "operation": "install_jukebox" },
-      "cancel": { "handler": "media.utility", "operation": "cancel" },
-      "clear_cache": { "handler": "media.utility", "operation": "clear_cache" }
+      "calibrate": { "handler": "media.calibrate" },
+      "disk_eraser": { "handler": "media.disk_eraser" },
+      "audio_disk": { "handler": "media.audio_disk" },
+      "video_disk": { "handler": "media.video_disk" },
+      "wireless": { "handler": "media.wireless" },
+      "jukebox": { "handler": "media.jukebox" },
+      "cancel": { "handler": "media.cancel" },
+      "clear_cache": { "handler": "media.clear_cache" }
     }
   }
 }
