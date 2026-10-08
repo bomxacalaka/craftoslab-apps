@@ -1,14 +1,17 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-usage() { echo "Usage: $0 [--profile PATH]" >&2; }
-find_profile() {
+usage() {
+    echo "Usage: $0 [--profile PATH]" >&2
+    echo "Profile resolution: 1) --profile PATH, 2) CurseForge instance 'CraftOS', 3) ~/.minecraft" >&2
+}
+find_curseforge_profile() {
     local root candidate
     for root in "$HOME/curseforge/minecraft/Instances" "$HOME/Documents/curseforge/minecraft/Instances" "$HOME/.local/share/curseforge/minecraft/Instances"; do
         [[ -d "$root" ]] || continue
         for candidate in "$root"/*; do
             [[ -d "$candidate" ]] || continue
-            [[ "${candidate##*/}" == [Cc][Rr][Aa][Ff][Tt][Oo][Ss] ]] && { printf '%s\n' "$candidate"; return; }
+            [[ "${candidate##*/}" == [Cc][Rr][Aa][Ff][Tt][Oo][Ss] ]] && { printf '%s\n' "$candidate"; return 0; }
         done
     done
     return 1
@@ -22,9 +25,12 @@ while (($#)); do
         *) echo "Unknown argument: $1" >&2; usage; exit 2 ;;
     esac
 done
-[[ -n "$profile" ]] || profile=$(find_profile) || {
-    echo "CurseForge profile 'CraftOS' was not found. Pass --profile with the instance directory." >&2; exit 1;
-}
+if [[ -z "$profile" ]]; then
+    profile=$(find_curseforge_profile) || profile=""
+fi
+if [[ -z "$profile" ]]; then
+    profile="$HOME/.minecraft"
+fi
 [[ -d "$profile" ]] || { echo "Minecraft profile not found: $profile" >&2; exit 1; }
 profile=$(cd "$profile" && pwd -P)
 project=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)

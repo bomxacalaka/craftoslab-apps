@@ -1,5 +1,14 @@
 [CmdletBinding()]
-param([string]$Profile)
+param(
+    [string]$Profile,
+    [switch]$Help
+)
+
+if ($Help) {
+    Write-Host 'Usage: sync-to-minecraft.ps1 [-Profile PATH] [-Help]'
+    Write-Host 'Profile resolution: 1) -Profile PATH, 2) CurseForge instance "CraftOS", 3) %USERPROFILE%\.minecraft'
+    exit 0
+}
 
 $ErrorActionPreference = 'Stop'
 $Project = Join-Path $PSScriptRoot '..'   # the app root (this script lives in .dev/)
@@ -11,8 +20,11 @@ if ([string]::IsNullOrWhiteSpace($Profile)) {
             Select-Object -First 1 -ExpandProperty FullName
     }
 }
+if ([string]::IsNullOrWhiteSpace($Profile)) {
+    $Profile = Join-Path $env:USERPROFILE '.minecraft'
+}
 if ([string]::IsNullOrWhiteSpace($Profile) -or -not (Test-Path -LiteralPath $Profile)) {
-    throw "CurseForge profile 'CraftOS' was not found. Pass -Profile with the instance directory."
+    throw "Minecraft profile not found: $Profile. Pass -Profile with the instance directory."
 }
 $Profile = (Resolve-Path -LiteralPath $Profile).Path
 $Apps = Join-Path $Profile 'cc-apps\apps'

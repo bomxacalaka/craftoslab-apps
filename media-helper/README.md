@@ -16,7 +16,7 @@ On Windows:
 .\.dev\sync-to-minecraft.ps1
 ```
 
-Both scripts accept an explicit profile path (`--profile PATH` or `-Profile PATH`). Open a powered CC:Tweaked computer, attach a speaker and advanced monitor, press **F8**, and choose **Media**. CC: App renders its JSON as a native client interface.
+Both scripts resolve the target profile in this order: an explicit profile path (`--profile PATH` or `-Profile PATH`), a CurseForge instance named `CraftOS`, then the vanilla `.minecraft` folder. Open a powered CC:Tweaked computer, attach a speaker and advanced monitor, press **F8**, and choose **Media**. CC: App renders its JSON as a native client interface.
 
 YouTube search, thumbnails, `yt-dlp`, FFmpeg conversion, and caching happen on the real client computer. Only the generated CC:Tweaked player and converted media segments are uploaded. The CC computer does not contact YouTube. Install `yt-dlp` and FFmpeg locally and put them on `PATH`, or set absolute paths in `config/cc-media-helper.json` inside the Minecraft profile.
 

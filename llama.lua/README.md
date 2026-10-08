@@ -23,7 +23,8 @@ Note: the [`draw-ocr.lua`](../draw-ocr.lua/) app vendors a byte-identical copy o
 On Windows:
 
 ```powershell
-..devun.ps1 -Backend standard -Steps 200 -Temperature 0
+..dev
+un.ps1 -Backend standard -Steps 200 -Temperature 0
 ```
 
 For a five-pass benchmark:
@@ -52,7 +53,7 @@ On Windows:
 .\.dev\sync-to-minecraft.ps1
 ```
 
-Both scripts automatically select the CurseForge profile named `CraftOS`. Override it when needed:
+Both scripts resolve the target Minecraft profile in this order: an explicit `--profile`/`-Profile` path, a CurseForge instance named `CraftOS`, then the vanilla `~/.minecraft` (`%USERPROFILE%\.minecraft` on Windows). Override it when needed:
 
 ```bash
 ./.dev/sync-to-minecraft.sh --profile "/path/to/another/profile"

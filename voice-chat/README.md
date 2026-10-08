@@ -42,6 +42,8 @@ The quick view's **App store** button opens the CC: App store screen over the Ph
 ./.dev/sync-to-minecraft.sh --profile "/path/to/minecraft/profile"
 ```
 
+The `--profile` (or `-Profile` on Windows) argument is optional: without it the scripts pick a CurseForge instance named `CraftOS`, and otherwise fall back to the vanilla `.minecraft` folder.
+
 Keep the Phone screen open while syncing to hot reload JSON layout changes. Java backend changes require rebuilding and reinstalling the CC: App JAR, followed by a Minecraft restart.
 
 Recordings and converted temporary files stay under `cc-apps/apps/voice-chat/data/` in the selected Minecraft profile.

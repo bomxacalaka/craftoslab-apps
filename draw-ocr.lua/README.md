@@ -18,7 +18,7 @@ On Windows:
 .\.dev\sync-to-minecraft.ps1
 ```
 
-The scripts automatically select the CurseForge profile named `CraftOS` and deploy this project, including its vendored copy of the [`llama.lua`](../llama.lua/) runtime and TinyStories assets under `llama/`. Open a CC:Tweaked computer at its shell prompt, press **F8**, then select **OCR**.
+The scripts resolve the target profile in this order: an explicit `--profile`/`-Profile` path, a CurseForge instance named `CraftOS`, then the vanilla `.minecraft` folder, and deploy this project, including its vendored copy of the [`llama.lua`](../llama.lua/) runtime and TinyStories assets under `llama/`. Open a CC:Tweaked computer at its shell prompt, press **F8**, then select **OCR**.
 
 ## Controls
 
