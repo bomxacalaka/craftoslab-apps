@@ -179,6 +179,16 @@
         "radial": false,
         "action": "dial",
         "tooltip": "Open the keypad and dial a 4-digit number."
+      },
+      {
+        "view": "quick",
+        "type": "button",
+        "id": "store",
+        "label": "App store",
+        "radialLabel": "App store",
+        "radial": false,
+        "action": "store",
+        "tooltip": "Browse and install approved apps from the CC: App store."
       }
     ],
     "actions": {
@@ -188,6 +198,7 @@
       "volumeDown": { "handler": "voice.volume_down" },
       "volumeUp": { "handler": "voice.volume_up" },
       "dial": { "handler": "voice.dial" },
+      "store": { "handler": "store.open" },
       "hangup": { "handler": "voice.hangup" }
     }
   }

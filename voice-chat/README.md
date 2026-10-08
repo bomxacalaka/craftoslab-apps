@@ -32,6 +32,10 @@ The call audio is DFPWM (the same codec as background voice and CC:Tweaked speak
 
 Calls and background voice chat are mutually exclusive: starting a call or taking one silently stops background transmission, and enabling background voice chat while a call is live is rejected. The dialer keys (**N** dial, **Y** accept, **X** hang up) can be rebound under Minecraft Controls → CC: App, and the radial menu (hold **R**) always carries **New call**, **Accept**, and **Hang up** so a call can be answered or ended without opening the Phone screen.
 
+## App store
+
+The quick view's **App store** button opens the CC: App store screen over the Phone: approved apps from https://cc-app-store.web.app with their icon, version, and author. Selecting one shows its description and size, and **Install** downloads the package, verifies it, and installs it into the profile's `cc-apps/apps/` folder — after which it appears in the F8 launcher like any synced app. **Uninstall** removes the app but keeps its `data/` folder (its user state), so reinstalling restores it to exactly where it was. Store connection settings live in `cc-apps/store.json` (see the mod's README).
+
 ## Install or hot reload the manifest
 
 ```bash
